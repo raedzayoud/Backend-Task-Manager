@@ -37,3 +37,8 @@ Route::get("tasks/{id}/user",[UserController::class,"gettaskbyuserid"]);
 Route::post("task/{task_id}/categories",[TaskController::class,"addCategoryToTask"]);
 Route::get("task/{task_id}/categories",[TaskController::class,"getCategoryToTask"]);
 Route::get("categories/{category_id}/task",[TaskController::class,"getTaskByCategorie"]);
+
+//authentication
+Route::post("register",[UserController::class,"register"]);
+Route::post("login",[UserController::class,"login"]);
+Route::post("logout",[UserController::class,"logout"])->middleware('auth:sanctum');;
