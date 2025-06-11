@@ -26,7 +26,7 @@ class StoreTaskRequest extends FormRequest
             "title" => 'required|string|max:40',
             "description" => 'nullable|string',
             'pirority' => 'required|integer|min:1|max:5',
-            'user_id'=> 'required|exists:users,id',
+          //  'user_id'=> 'required|exists:users,id',
         ];
     }
     public function messages(): array

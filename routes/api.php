@@ -19,26 +19,26 @@ Route::get('/user', function (Request $request) {
 // Route::get("tasks/{id}",[TaskController::class,"showbydetails"]);
 // Route::delete("tasks/{id}",[TaskController::class,"deletebyid"]);
 
-Route::apiResource('tasks', TaskController::class);
-
-Route::post('profile',[ProfileController::class,"store"]);
-
-Route::put('profile/{id}',[ProfileController::class,"update"]);
-
-Route::get("profile/{id}",[ProfileController::class,"show"]);
-
-Route::get("user/{id}/profile",[UserController::class,"getprofile"]);
-
-Route::get("user/{id}/tasks",[UserController::class,"getusertasks"]);
-
-Route::get("tasks/{id}/user",[UserController::class,"gettaskbyuserid"]);
-
-
-Route::post("task/{task_id}/categories",[TaskController::class,"addCategoryToTask"]);
-Route::get("task/{task_id}/categories",[TaskController::class,"getCategoryToTask"]);
-Route::get("categories/{category_id}/task",[TaskController::class,"getTaskByCategorie"]);
-
 //authentication
-Route::post("register",[UserController::class,"register"]);
-Route::post("login",[UserController::class,"login"]);
-Route::post("logout",[UserController::class,"logout"])->middleware('auth:sanctum');;
+Route::post("register", [UserController::class, "register"]);
+Route::post("login", [UserController::class, "login"]);
+Route::post("logout", [UserController::class, "logout"])->middleware('auth:sanctum');
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::apiResource('tasks', TaskController::class);
+
+    Route::prefix('profile')->group(function () {
+        Route::post('', [ProfileController::class, "store"]);
+        Route::put('/{id}', [ProfileController::class, "update"]);
+        Route::get('/{id}', [ProfileController::class, "show"]);
+    });
+    Route::get("user/{id}/profile", [UserController::class, "getprofile"]);
+    Route::get("user/{id}/tasks", [UserController::class, "getusertasks"]);
+    Route::get("tasks/{id}/user", [UserController::class, "gettaskbyuserid"]);
+
+
+    Route::post("task/{task_id}/categories", [TaskController::class, "addCategoryToTask"]);
+    Route::get("task/{task_id}/categories", [TaskController::class, "getCategoryToTask"]);
+    Route::get("categories/{category_id}/task", [TaskController::class, "getTaskByCategorie"]);
+});

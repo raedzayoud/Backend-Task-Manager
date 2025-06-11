@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -25,10 +26,11 @@ class TaskController extends Controller
         return response()->json(["message" => "Categorie added succesfully"], 200);
     }
 
-    public function getTaskByCategorie($categorie_id){
-      $category=Category::find($categorie_id);
-      $task=$category->tasks;
-      return response()->json($task);
+    public function getTaskByCategorie($categorie_id)
+    {
+        $category = Category::find($categorie_id);
+        $task = $category->tasks;
+        return response()->json($task);
     }
 
     public function getCategoryToTask($taskid)
@@ -39,10 +41,11 @@ class TaskController extends Controller
 
 
 
+
     public function index()
     {
-        //
-        return response()->json(Task::all());
+        $tasks = Auth::user()->tasks;
+        return response()->json($tasks);
     }
 
     /**
@@ -50,7 +53,10 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        $user_id = Auth::user()->id;
+        $validateData = $request->validated();
+        $validateData["user_id"] = $user_id;
+        $task = Task::create($validateData);
         return response()->json($task);
     }
 
@@ -60,7 +66,12 @@ class TaskController extends Controller
     public function show(int $id)
     {
         //
+        $user_id = Auth::user()->id;
         $tasks = Task::find($id);
+        if ($user_id != $tasks->user_id) {
+            return response()->json(["message" =>
+            "You are not allowed to read this task"], 403);
+        }
         return response()->json($tasks);
     }
 
@@ -70,7 +81,12 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, int $id)
     {
         //
+        $user_id = Auth::user()->id;
         $tasks = Task::find($id);
+        if ($user_id != $tasks->user_id) {
+            return response()->json(["message" =>
+            "You are not allowed to update this task"], 403);
+        }
         $tasks->update($request->validated());
         return response()->json($tasks);
     }
@@ -80,7 +96,12 @@ class TaskController extends Controller
      */
     public function destroy(int $id)
     {
+        $user_id = Auth::user()->id;
         $tasks = Task::find($id);
+        if ($user_id != $tasks->user_id) {
+            return response()->json(["message" =>
+            "You are not allowed to delete this task"]);
+        }
         $tasks->delete();
         return response()->json(null);
     }
