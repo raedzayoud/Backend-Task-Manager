@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -41,4 +42,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("task/{task_id}/categories", [TaskController::class, "addCategoryToTask"]);
     Route::get("task/{task_id}/categories", [TaskController::class, "getCategoryToTask"]);
     Route::get("categories/{category_id}/task", [TaskController::class, "getTaskByCategorie"]);
+
+    // admin
+    Route::get("task/all", [TaskController::class, "getAllTask"])->middleware('checkuser');
+    Route::get("task/ordred", [TaskController::class, "getTaskByPirioty"]);
+
+
+    Route::post("task/{id}/favourite", [FavouriteController::class, "addToFavorites"]);
+    Route::delete("task/{id}/favourite", [FavouriteController::class, "removeFromFavorites"]);
+    Route::get("task/favourite", [FavouriteController::class, "getFavoritesTask"]);
+
+
+
+
+
 });

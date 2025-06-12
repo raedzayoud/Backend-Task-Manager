@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+    public function getTaskByPirioty()
+    {
+        $tasks = Auth::user()->tasks()->orderByRaw("FIELD(pirority,'high','medium','low')")->get();
+        return response()->json(
+            ["tasks" =>$tasks]
+        );
+    }
+
+    public function getAllTask()
+    {
+        $tasks = Task::all();
+        return response()->json(
+            ["tasks" =>
+            $tasks]
+        );
+    }
 
     public function addCategoryToTask(Request $request, $taskid)
     {
@@ -38,9 +54,6 @@ class TaskController extends Controller
         $task = Task::find($taskid);
         return response()->json($task->categories, 200);
     }
-
-
-
 
     public function index()
     {
