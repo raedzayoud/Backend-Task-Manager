@@ -23,12 +23,11 @@ class ProfileTaskRequest extends FormRequest
     {
         return [
             //
-            "user_id" => 'required|exists:users,id',
             "phone" => 'required|string',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'bio' => 'nullable|string',
-
+            'image'=>'required|image|mimes:png,jpg,jpeg,gif|max:3048'
         ];
     }
 }

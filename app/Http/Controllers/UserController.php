@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,6 +11,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function GetProfileUser()
+    {
+        $user_id = Auth::user()->id;
+        $user = User::with("profile")->find($user_id);
+        return new UserResource($user);
+    }
     public function register(Request $request)
     {
         $request->validate([

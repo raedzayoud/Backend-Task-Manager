@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileTaskRequest;
 use App\Http\Requests\UpdateProfileTaskRequest;
 use App\Models\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -16,7 +17,14 @@ class ProfileController extends Controller
     }
     public function store(ProfileTaskRequest $profileTaskRequest)
     {
-        $profile = Profile::create($profileTaskRequest->validated());
+        $userId=Auth::user()->id;
+        $validated= $profileTaskRequest->validated();
+        $validated['user_id']=$userId;
+        if($profileTaskRequest->hasFile('image')){
+          $path=$profileTaskRequest->file('image')->store('myPhoto','public');
+          $validated['image']=$path;
+        }
+        $profile = Profile::create($validated);
         return response()->json([
             'message' => 'Profile created successfully',
             'profile' => $profile
