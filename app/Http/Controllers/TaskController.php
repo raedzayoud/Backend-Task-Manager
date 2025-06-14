@@ -15,7 +15,7 @@ class TaskController extends Controller
     {
         $tasks = Auth::user()->tasks()->orderByRaw("FIELD(pirority,'high','medium','low')")->get();
         return response()->json(
-            ["tasks" =>$tasks]
+            ["tasks" => $tasks]
         );
     }
 
@@ -109,13 +109,20 @@ class TaskController extends Controller
      */
     public function destroy(int $id)
     {
-        $user_id = Auth::user()->id;
-        $tasks = Task::find($id);
-        if ($user_id != $tasks->user_id) {
-            return response()->json(["message" =>
-            "You are not allowed to delete this task"]);
+        try {
+            $user_id = Auth::user()->id;
+            $tasks = Task::find($id);
+            if ($user_id != $tasks->user_id) {
+                return response()->json(["message" =>
+                "You are not allowed to delete this task"]);
+            }
+            $tasks->delete();
+            return response()->json(["message" => "Task deleted successfully"]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => "Task Not Found",
+                "details" => $e->getMessage()
+            ]);
         }
-        $tasks->delete();
-        return response()->json(null);
     }
 }
